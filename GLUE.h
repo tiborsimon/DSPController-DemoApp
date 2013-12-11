@@ -37,13 +37,16 @@
 //                                                                        //
 //========================================================================//
 
+#define EFFECT_STATE_MUTED			1
+#define EFFECT_STATE_OSCILLATOR		2
+#define EFFECT_STATE_LOW_PASS		3
 
-#define OSCILLATOR_TYPE_SIN     1
-#define OSCILLATOR_TYPE_TRI     2
-#define OSCILLATOR_TYPE_SQU     3
+#define OSCILLATOR_TYPE_SIN     	1
+#define OSCILLATOR_TYPE_TRI     	2
+#define OSCILLATOR_TYPE_SQU     	3
 
 // Default values
-#define DEFAULT_GLUE_state          0
+#define DEFAULT_GLUE_effect_state   EFFECT_STATE_MUTED
 #define DEFAULT_GLUE_output_mux     0xf
 
 #define DEFAULT_GLUE_1_freq         440.0f
@@ -58,7 +61,7 @@
 
 
 // Global effect parameters
-extern float    GLUE_state;
+extern float    GLUE_effect_state;
 extern int      GLUE_output_mux;
 
 // Oscillator parameters

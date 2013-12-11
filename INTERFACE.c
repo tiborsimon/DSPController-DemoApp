@@ -24,6 +24,9 @@
 #define STATE_MAIN          2
 #define STATE_DEMO          3
 #define STATE_EFFECT_MAIN   4
+#define STATE_EFFECT_OSC	5
+#define STATE_EFFECT_LPF1	6
+#define STATE_EFFECT_LPF2	7
 
 // Local variables
 // Global interface variables
@@ -48,12 +51,17 @@ int led_r = 1;
 float temp_float = 0.0f;
 int float_precision;
 
+// Audio interface variables
+int temp_effect_state = 1;
+int temp_mux = 0xf;
+
+
 
 
 
 // GLUE variables
 // Global effect parameters
-float    GLUE_state         = DEFAULT_GLUE_state;
+float    GLUE_effect_state  = DEFAULT_GLUE_effect_state;
 int      GLUE_output_mux    = DEFAULT_GLUE_output_mux;
 
 // Oscillator parameters
@@ -81,7 +89,7 @@ float    GLUE_2_mod_freq    = DEFAULT_GLUE_2_mod_freq;
 
 void initInterface(void) {
     
-    DSPController_init( FS_48KHZ | ENCODER_VELOCITY_ON );
+    DSPController_init( FS_48KHZ | ENCODER_VELOCITY_OFF );
     DSPController_assembler_engage();
     
 }
@@ -106,6 +114,20 @@ void initInterface(void) {
 
 int top = 0;
 int bottom = 1;
+
+const char *byte_to_binary(int x)
+{
+    static char b[5];
+    b[0] = '\0';
+
+    int z;
+    for (z = 8; z > 0; z >>= 1)
+    {
+        strcat(b, ((x & z) == z) ? "1" : "0");
+    }
+
+    return b;
+}
 
 void updateInterface(void) {
 
@@ -133,19 +155,15 @@ void updateInterface(void) {
         //=================================================
         case STATE_MAIN:
 			
-        	if(e != DSPC_EVENT_NOTHING) {
-        	    // Render top LCD
-	            if (menu_pointer == 0) {
-	                DSPController_lcd(0,"[Effect]  Demo  ");
-	            } else if (menu_pointer == 1) {
-	                DSPController_lcd(0," Effect  [Demo] ");
-	            }
-        	}
+        	// Render top LCD
+	        if (menu_pointer == 0) {
+	            DSPController_lcd(0,"[Effect]  Demo  ");
+	            DSPController_lcd(1,"  Audio effect  ");
+	        } else if (menu_pointer == 1) {
+	            DSPController_lcd(0," Effect  [Demo] ");
+	            DSPController_lcd(1," Interface demo ");
+	        }
         	
-            
-
-            DSPController_lcd(1,"     Choose     ");
-
             // Step left
             if (e == DSPC_EVENT_A2_SHORT) {
                 menu_pointer = 0;
@@ -160,6 +178,7 @@ void updateInterface(void) {
             if (e == DSPC_EVENT_A3_SHORT) {
                 if (menu_pointer == 0) {
                     interface_state = STATE_EFFECT_MAIN;
+                    DSPController_flush();
                 } else {
                     interface_state = STATE_DEMO;
                     e1 = 0;
@@ -167,6 +186,7 @@ void updateInterface(void) {
                     e3 = 0;
                     led_l = 1;
                     led_r = 1;
+                    DSPController_flush();
                 }
                 menu_pointer = 0;
             }
@@ -271,6 +291,132 @@ void updateInterface(void) {
             // Menu handling: BACK
             if (e == DSPC_EVENT_A1_SHORT) {
                 interface_state = STATE_MAIN;
+                menu_pointer = 0;
+            }
+
+            break;
+            
+        
+        //=================================================
+        // MAIN EFFECT STATE
+        //=================================================
+        case STATE_EFFECT_MAIN:
+
+            
+         
+            
+            
+            t1 = DSPController_get_encoder(1);
+            
+            temp_effect_state += t1;
+            
+            if(temp_effect_state < 1) temp_effect_state = 1;
+            if(temp_effect_state > 3) temp_effect_state = 3;
+            
+            
+            switch (temp_effect_state) {
+                case 1:
+                	GLUE_effect_state = EFFECT_STATE_MUTED; break;
+              	case 2:
+                	GLUE_effect_state = EFFECT_STATE_OSCILLATOR; break;
+                case 3:
+                	GLUE_effect_state = EFFECT_STATE_LOW_PASS; break;
+                default: break;
+            }
+            
+            t3 = DSPController_get_encoder(3);
+            temp_mux += t3;
+            if(temp_mux < 0) temp_mux = 0;
+            if(temp_mux > 0xf) temp_mux = 0xf;
+            GLUE_output_mux = temp_mux;
+            
+            // render LCD
+	        if (GLUE_effect_state == EFFECT_STATE_MUTED) {
+	            DSPController_lcd(0," Effect   MUX  ");
+	            DSPController_lcd(1,"  1 Mute  %s",byte_to_binary(temp_mux));
+	        } else if (GLUE_effect_state == EFFECT_STATE_OSCILLATOR) {
+	            DSPController_lcd(0,"[Effect]  MUX  ");
+	            DSPController_lcd(1,"  2 Osc   %s",byte_to_binary(temp_mux));
+	        } else if (GLUE_effect_state == EFFECT_STATE_LOW_PASS) {
+	            DSPController_lcd(0,"[Effect]  MUX  ");
+	            DSPController_lcd(1,"  3 LPF   %s",byte_to_binary(temp_mux));
+	        }
+            
+            
+	        // Menu handling: ENTER
+            if (e == DSPC_EVENT_A3_SHORT) {
+                
+                switch (temp_effect_state) {
+	                case 1: 
+	                	break;
+	              	case 2:
+	                	interface_state = STATE_EFFECT_OSC; 
+	                	break;
+	                case 3:
+	                	interface_state = STATE_EFFECT_LPF1; 
+	                	break;
+	                default: break;
+	            }
+	            
+	            DSPController_flush();
+                menu_pointer = 0;
+            }
+            
+            // Menu handling: BACK
+            if (e == DSPC_EVENT_A1_SHORT) {
+                interface_state = STATE_MAIN;
+                menu_pointer = 0;
+            }
+
+            break;
+            
+            
+        //=================================================
+        // EFFECT OSCILLATOR STATE
+        //=================================================
+        case STATE_EFFECT_OSC:
+
+            DSPController_lcd(0,"OSC");
+            DSPController_lcd(1," ");
+            
+            // Menu handling: BACK
+            if (e == DSPC_EVENT_A1_SHORT) {
+                interface_state = STATE_EFFECT_MAIN;
+                menu_pointer = 0;
+            }
+
+            break;
+            
+            
+        //=================================================
+        // EFFECT LPF 1 STATE
+        //=================================================
+        case STATE_EFFECT_LPF1:
+
+            DSPController_lcd(0,"LPF1");
+            DSPController_lcd(1," ");
+            
+            // Menu handling: BACK
+            if (e == DSPC_EVENT_A1_SHORT) {
+                interface_state = STATE_EFFECT_MAIN;
+                menu_pointer = 0;
+            }
+
+            break;
+            
+            
+            
+        //=================================================
+        // EFFECT LPF 2 STATE
+        //=================================================
+        case STATE_EFFECT_LPF2:
+
+            DSPController_lcd(0,"LPF2");
+            DSPController_lcd(1," ");
+            
+            // Menu handling: BACK
+            if (e == DSPC_EVENT_A1_SHORT) {
+                interface_state = STATE_EFFECT_MAIN;
                 menu_pointer = 0;
             }
 

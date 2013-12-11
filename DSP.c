@@ -42,6 +42,13 @@ void process(void) {
     //====================================================================
     // DSP ALGORITHM
     //====================================================================
+    if (GLUE_effect_state == EFFECT_STATE_MUTED) {
+        
+    } else if (GLUE_effect_state == EFFECT_STATE_OSCILLATOR) {
+        
+    } else if (GLUE_effect_state == EFFECT_STATE_LOW_PASS) {
+        y = x;
+    }
     
 
 

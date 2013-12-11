@@ -307,6 +307,7 @@ void dspcontroller_lcd_handler(unsigned char line, const char* format, va_list a
 void DSPController_init_default(void);
 void DSPController_init(int code);
 void DSPController_tick(void);
+void DSPController_flush(void);
 void DSPController_led(unsigned char leftLed, unsigned char rightLed);
 void DSPController_lcd_top(const char* format, ...);
 void DSPController_lcd_bottom(const char* format, ...);

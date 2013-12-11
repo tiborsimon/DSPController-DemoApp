@@ -542,6 +542,20 @@ void dspcontroller_add_event_to_buffer(unsigned char event) {
     // dspcontroller_atomic_block_END();
 }
 
+void DSPController_flush(void) {
+    // event handling variables
+    dspcontroller_event_pointer = 0;
+
+    // encoder variables
+    dspcontroller_encoder_1 = 0;
+    dspcontroller_encoder_2 = 0;
+    dspcontroller_encoder_3 = 0;
+    
+    dspcontroller_encoder_velocity_1 = 0;
+    dspcontroller_encoder_velocity_2 = 0;
+    dspcontroller_encoder_velocity_3 = 0;
+}
+
 unsigned char DSPController_get_event() {
     if (dspcontroller_event_pointer == 0) {
         return DSPC_EVENT_NOTHING;

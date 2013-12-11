@@ -28,6 +28,9 @@
 #define STATE_EFFECT_LPF1	6
 #define STATE_EFFECT_LPF2	7
 
+
+
+
 // Local variables
 // Global interface variables
 int i = 0;
@@ -55,6 +58,18 @@ int float_precision;
 int temp_effect_state = 1;
 int temp_mux = 0xf;
 
+// oscillator_variables
+int o_type = 1;
+int o_freq = 440;
+int o_amp = 1;
+
+// lpf variables
+int lpf_fc = 1000;
+int lpf_q = 1;
+int lpf_mod_type = 1;
+int lpf_mod_span = 800;
+float lpf_mod_freq = 0.1f;
+
 
 
 
@@ -72,7 +87,7 @@ int      GLUE_1_type        = DEFAULT_GLUE_1_type;
 // LowPass paramters
 float    GLUE_2_fc          = DEFAULT_GLUE_2_fc;
 float    GLUE_2_q           = DEFAULT_GLUE_2_q;
-float    GLUE_2_mod_type    = DEFAULT_GLUE_2_mod_type;
+int	     GLUE_2_mod_type    = DEFAULT_GLUE_2_mod_type;
 float    GLUE_2_mod_span    = DEFAULT_GLUE_2_mod_span;
 float    GLUE_2_mod_freq    = DEFAULT_GLUE_2_mod_freq;
 
@@ -89,7 +104,7 @@ float    GLUE_2_mod_freq    = DEFAULT_GLUE_2_mod_freq;
 
 void initInterface(void) {
     
-    DSPController_init( FS_48KHZ | ENCODER_VELOCITY_OFF );
+    DSPController_init( FS_48KHZ | ENCODER_VELOCITY_ON );
     DSPController_assembler_engage();
     
 }
@@ -146,6 +161,7 @@ void updateInterface(void) {
             if (e != DSPC_EVENT_NOTHING) {
                 interface_state = STATE_MAIN;
                 menu_pointer = 0;
+                DSPController_flush();
             }
 
             break;
@@ -333,13 +349,13 @@ void updateInterface(void) {
             // render LCD
 	        if (GLUE_effect_state == EFFECT_STATE_MUTED) {
 	            DSPController_lcd(0," Effect   MUX  ");
-	            DSPController_lcd(1,"  1 Mute  %s",byte_to_binary(temp_mux));
+	            DSPController_lcd(1,"[1] Mute  %s",byte_to_binary(temp_mux));
 	        } else if (GLUE_effect_state == EFFECT_STATE_OSCILLATOR) {
 	            DSPController_lcd(0,"[Effect]  MUX  ");
-	            DSPController_lcd(1,"  2 Osc   %s",byte_to_binary(temp_mux));
+	            DSPController_lcd(1,"[2] Osc   %s",byte_to_binary(temp_mux));
 	        } else if (GLUE_effect_state == EFFECT_STATE_LOW_PASS) {
 	            DSPController_lcd(0,"[Effect]  MUX  ");
-	            DSPController_lcd(1,"  3 LPF   %s",byte_to_binary(temp_mux));
+	            DSPController_lcd(1,"[3] LPF   %s",byte_to_binary(temp_mux));
 	        }
             
             
@@ -350,7 +366,10 @@ void updateInterface(void) {
 	                case 1: 
 	                	break;
 	              	case 2:
-	                	interface_state = STATE_EFFECT_OSC; 
+	                	interface_state = STATE_EFFECT_OSC;
+	                	o_type = 1;
+						o_freq = 440;
+						o_amp = 1;
 	                	break;
 	                case 3:
 	                	interface_state = STATE_EFFECT_LPF1; 
@@ -376,8 +395,47 @@ void updateInterface(void) {
         //=================================================
         case STATE_EFFECT_OSC:
 
-            DSPController_lcd(0,"OSC");
-            DSPController_lcd(1," ");
+            DSPController_lcd(0,"Type  Freq  Amp ");
+            
+            
+            
+            switch(o_type) {
+             	case 1:
+             		DSPController_lcd(1," sin  %03d   %03d",o_freq,o_amp);
+             		GLUE_1_type = OSCILLATOR_TYPE_SIN;
+             		break;
+             	case 2:
+             		DSPController_lcd(1," sqr  %03d   %03d",o_freq,o_amp);
+             		GLUE_1_type = OSCILLATOR_TYPE_SQR;
+             		break;
+             	default:
+             		break;   
+            }
+            
+            t1 = DSPController_get_encoder(1);
+            t2 = DSPController_get_encoder(2);
+            t3 = DSPController_get_encoder(3);
+            
+            o_type += t1;
+            o_freq += t2;
+            o_amp  += t3;
+            
+            if(o_type < 1) o_type = 1;
+            if(o_type > 2) o_type = 2;
+            
+            if(o_freq < 1) o_freq = 1;
+            if(o_freq > 20000) o_freq = 20000;
+            
+            if(o_amp < 0) o_amp = 0;
+            if(o_amp > 127) o_amp = 127;
+            
+            GLUE_1_amp = (float)o_amp/256.0f;
+            
+            GLUE_1_freq = (float)o_freq;
+            
+            
+            
+            
             
             // Menu handling: BACK
             if (e == DSPC_EVENT_A1_SHORT) {
@@ -393,13 +451,62 @@ void updateInterface(void) {
         //=================================================
         case STATE_EFFECT_LPF1:
 
-            DSPController_lcd(0,"LPF1");
-            DSPController_lcd(1," ");
+            DSPController_lcd(0,"  Fc   Q   Mod >");
+            
+            
+            switch(lpf_mod_type) {
+                case 0:
+             		DSPController_lcd(1," %4d  %2d  none",lpf_fc,lpf_q);
+             		GLUE_2_mod_type = OSCILLATOR_TYPE_NONE;
+             		break;
+             	case 1:
+             		DSPController_lcd(1," %4d  %2d  sine",lpf_fc,lpf_q);
+             		GLUE_2_mod_type = OSCILLATOR_TYPE_SIN;
+             		break;
+             	case 2:
+             		DSPController_lcd(1," %4d  %2d  sque",lpf_fc,lpf_q);
+             		GLUE_2_mod_type = OSCILLATOR_TYPE_SQR;
+             		break;
+             	default:
+             		break;   
+            }
+            
+            t1 = DSPController_get_encoder(1);
+            t2 = DSPController_get_encoder(2);
+            t3 = DSPController_get_encoder(3);
+            
+            lpf_fc += t1;
+            lpf_q += t2;
+            lpf_mod_type  += t3;
+            
+            if(lpf_fc < (int)DEFAULT_GLUE_2_mod_span+3) lpf_fc = (int)DEFAULT_GLUE_2_mod_span+3;
+            if(lpf_fc > 20000) lpf_fc = 20000;
+            
+            if(lpf_q < 1) lpf_q = 1;
+            if(lpf_q > 100) lpf_q = 100;
+            
+            if(lpf_mod_type < 1) lpf_mod_type = 1;
+            if(lpf_mod_type > 2) lpf_mod_type = 2;
+            
+            
+            GLUE_2_fc = (float)lpf_fc;
+            
+            GLUE_2_q = (float)lpf_q;
+			
+			
             
             // Menu handling: BACK
             if (e == DSPC_EVENT_A1_SHORT) {
                 interface_state = STATE_EFFECT_MAIN;
                 menu_pointer = 0;
+                DSPController_flush();
+            }
+            
+            // Menu handling: RIGHT
+            if (e == DSPC_EVENT_A4_SHORT) {
+                interface_state = STATE_EFFECT_LPF2;
+                menu_pointer = 0;
+                DSPController_flush();
             }
 
             break;
@@ -411,13 +518,41 @@ void updateInterface(void) {
         //=================================================
         case STATE_EFFECT_LPF2:
 
-            DSPController_lcd(0,"LPF2");
-            DSPController_lcd(1," ");
+            DSPController_lcd(0,"< Span    MFreq   ");
+            DSPController_lcd(1,"  %4d     %s",lpf_mod_span,DSPC_FTS(lpf_mod_freq,2));
+            
+            
+            t1 = DSPController_get_encoder(1);
+            t2 = DSPController_get_encoder(3);
+            
+            lpf_mod_span += t1;
+            lpf_mod_freq += 0.05f*(float)t2;
+            
+            if(lpf_mod_span < 1) lpf_mod_span = 1;
+            if(lpf_mod_span > (int)GLUE_2_fc-3) lpf_mod_span = (int)GLUE_2_fc-3;
+            
+            if(lpf_mod_freq < 0.05f) lpf_mod_freq = 0.05f;
+            if(lpf_mod_freq > 100.0f) lpf_mod_freq = 100.0f;
+            
+            
+            GLUE_2_mod_span = (float)lpf_mod_span;
+            
+            GLUE_2_mod_freq = lpf_mod_freq;
+            
+            
             
             // Menu handling: BACK
             if (e == DSPC_EVENT_A1_SHORT) {
                 interface_state = STATE_EFFECT_MAIN;
                 menu_pointer = 0;
+                DSPController_flush();
+            }
+            
+            // Menu handling: RIGHT
+            if (e == DSPC_EVENT_A2_SHORT) {
+                interface_state = STATE_EFFECT_LPF1;
+                menu_pointer = 0;
+                DSPController_flush();
             }
 
             break;

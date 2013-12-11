@@ -38,7 +38,7 @@ ifeq ($(MAKECMDGOALS),DemoApp_Debug)
 
 DemoApp_Debug : ./Debug/DemoApp.dxe 
 
-Debug/DSP.doj :DSP.c GLUE.h tt.h $(VDSP)/213xx/include/cdef21364.h $(VDSP)/213xx/include/Cdef21363.h $(VDSP)/213xx/include/def21364.h $(VDSP)/213xx/include/def21363.h $(VDSP)/213xx/include/signal.h DSPController.h $(VDSP)/213xx/include/stdio.h $(VDSP)/213xx/include/stdio_21xxx.h $(VDSP)/213xx/include/stdarg.h $(VDSP)/213xx/include/string.h $(VDSP)/213xx/include/SRU21364.h $(VDSP)/213xx/include/sru21363.h 
+Debug/DSP.doj :DSP.c GLUE.h tt.h $(VDSP)/213xx/include/cdef21364.h $(VDSP)/213xx/include/Cdef21363.h $(VDSP)/213xx/include/def21364.h $(VDSP)/213xx/include/def21363.h $(VDSP)/213xx/include/signal.h DSPController.h $(VDSP)/213xx/include/stdio.h $(VDSP)/213xx/include/stdio_21xxx.h $(VDSP)/213xx/include/stdarg.h $(VDSP)/213xx/include/string.h $(VDSP)/213xx/include/SRU21364.h $(VDSP)/213xx/include/sru21363.h $(VDSP)/213xx/include/math.h $(VDSP)/213xx/include/math_21xxx.h 
 	@echo ".\DSP.c"
 	$(VDSP)/cc21k.exe -c .\DSP.c -file-attr ProjectName=DemoApp -g -structs-do-not-overlap -no-multiline -double-size-32 -warn-protos -proc ADSP-21364 -o .\Debug\DSP.doj -MM
 

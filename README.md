@@ -5,7 +5,7 @@ __DSPController__ is an embedded human interface device that connects to the _An
 
 
 
-_This repository contains a project that uses the lates __DSPController driver__ and  demonstartes the basic usage of the __DSPController API.___
+_This repository contains a project that uses the lates DSPController driver and  demonstartes the basic usage of the  DSPController API._
 
 ---
 

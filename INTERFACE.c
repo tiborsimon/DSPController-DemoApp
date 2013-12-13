@@ -19,7 +19,8 @@
 //                                                                        //
 //========================================================================//
 
-// Defined symbols
+// DEFINED SYMBOLS
+// Interface states
 #define STATE_WELCOME       1
 #define STATE_MAIN          2
 #define STATE_DEMO          3
@@ -31,17 +32,19 @@
 
 
 
-// Local variables
+// LOCAL VARIABLES
 // Global interface variables
 int i = 0;
 int interface_state = STATE_WELCOME;
 int menu_pointer = 0;
 
 // Demo interface variables
+// encoder sum variables
 Encoder e1 = 0;
 Encoder e2 = 0;
 Encoder e3 = 0;
 
+// encoder temp variables
 Encoder t1;
 Encoder t2;
 Encoder t3;
@@ -54,14 +57,17 @@ int led_r = 1;
 float temp_float = 0.0f;
 int float_precision;
 
+
 // Audio interface variables
 int temp_effect_state = 1;
 int temp_mux = 0xf;
 
-// oscillator_variables
+
+// Oscillator_variables
 int o_type = 1;
 int o_freq = 440;
 int o_amp = 1;
+
 
 // lpf variables
 int lpf_fc = 1000;
@@ -71,11 +77,8 @@ int lpf_mod_span = 800;
 float lpf_mod_freq = 0.1f;
 
 
-
-
-
-// GLUE variables
-// Global effect parameters
+// GLUE VARIABLES
+// Global effect parameters with inital values
 float    GLUE_effect_state  = DEFAULT_GLUE_effect_state;
 int      GLUE_output_mux    = DEFAULT_GLUE_output_mux;
 
@@ -130,6 +133,7 @@ void initInterface(void) {
 int top = 0;
 int bottom = 1;
 
+// Helper function for the multiplexer
 const char *byte_to_binary(int x)
 {
     static char b[5];
@@ -144,6 +148,8 @@ const char *byte_to_binary(int x)
     return b;
 }
 
+
+// This function will be called periodically at a low priority level
 void updateInterface(void) {
 
     Event e = DSPController_get_event();
@@ -255,10 +261,7 @@ void updateInterface(void) {
 			e1 += t1;
 			e2 += t2;
 			e3 += t3;
-			
-			
-			
-            
+
             // Top LCD handling
             // get dip value
             dip = DSPController_get_dip();
@@ -275,9 +278,6 @@ void updateInterface(void) {
             // render top LCD
             temp_float = DSPController_assembler_get_current();
     		DSPController_lcd_top("Num: %s",DSPC_FTS(temp_float,float_precision));
-    		
-    		
-
     		
 
     		// Bottom LCD  handling. Get menu pointer
@@ -318,10 +318,6 @@ void updateInterface(void) {
         //=================================================
         case STATE_EFFECT_MAIN:
 
-            
-         
-            
-            
             t1 = DSPController_get_encoder(1);
             
             temp_effect_state += t1;
@@ -435,8 +431,6 @@ void updateInterface(void) {
             
             
             
-            
-            
             // Menu handling: BACK
             if (e == DSPC_EVENT_A1_SHORT) {
                 interface_state = STATE_EFFECT_MAIN;
@@ -452,7 +446,6 @@ void updateInterface(void) {
         case STATE_EFFECT_LPF1:
 
             DSPController_lcd(0,"  Fc   Q   Mod >");
-            
             
             switch(lpf_mod_type) {
                 case 0:

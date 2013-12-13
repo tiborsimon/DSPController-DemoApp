@@ -37,15 +37,20 @@
 //                                                                        //
 //========================================================================//
 
+// DSP states
 #define EFFECT_STATE_MUTED			1
 #define EFFECT_STATE_OSCILLATOR		2
 #define EFFECT_STATE_LOW_PASS		3
 
+// Oscillator types
 #define OSCILLATOR_TYPE_NONE     	0
 #define OSCILLATOR_TYPE_SIN     	1
 #define OSCILLATOR_TYPE_SQR     	2
 
-// Default values
+
+// Default values for the variables below. It is worth to do so
+// because you have to modifie this file only if you want to 
+// change the initial values of the variables.
 #define DEFAULT_GLUE_effect_state   EFFECT_STATE_MUTED
 #define DEFAULT_GLUE_output_mux     0xf
 

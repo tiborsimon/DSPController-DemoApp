@@ -33,6 +33,7 @@
 
 #define M_PI 		3.14159265359f
 #define Fs			48000.0f
+
 // DSP base variables
 float lfo_theta = 0.0f;
 float lfo = 0.0f;
@@ -53,9 +54,10 @@ void process(void) {
     // DSP ALGORITHM
     //====================================================================
     if (GLUE_effect_state == EFFECT_STATE_MUTED) {
-        
+        // nothing to do. y remains 0.
     } else if (GLUE_effect_state == EFFECT_STATE_OSCILLATOR) {
-        
+
+        // OSCILLATOR
         lfo = sin(lfo_theta);
         lfo_theta += 2.0f*M_PI*GLUE_1_freq/Fs;
         
@@ -78,6 +80,7 @@ void process(void) {
         
     } else if (GLUE_effect_state == EFFECT_STATE_LOW_PASS) {
         
+        // LOWPASS FILTER
         lfo = sin(lfo_theta);
         lfo_theta += 2.0f*M_PI*GLUE_2_mod_freq/Fs;
         
@@ -99,7 +102,7 @@ void process(void) {
              	break;   
         }
         
-        // komplex szuroparameterek szamolasa 
+        // calculate complex filter parameters
         float fc = GLUE_2_fc + GLUE_2_mod_span * lfo;
 		float wc = 2*M_PI*fc;
 		float sigma = wc/(2*GLUE_2_q);
@@ -107,7 +110,8 @@ void process(void) {
 		float r = exp(-sigma/Fs); 
 		float p_r = r*cos(theta); 
 		float p_i = r*sin(theta);
-		// komplex szuro
+
+		// run the filter
 		float c_r = p_r * c_r_old - p_i * c_i_old + x; 
 		float c_i = p_i * c_r_old + p_r * c_i_old;
 
@@ -116,6 +120,7 @@ void process(void) {
 
 		y = c_i;
 
+        // Normalization for constant Q level.
 		float norm_factor = ((82*exp(-(GLUE_2_fc+GLUE_2_mod_span*lfo)/500)+1)*(1-3.13*sqrt(exp(-GLUE_2_q/0.56-2.23))));
 		y = y/norm_factor;
 		

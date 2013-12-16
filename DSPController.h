@@ -312,9 +312,9 @@ void DSPController_led(unsigned char leftLed, unsigned char rightLed);
 void DSPController_lcd_top(const char* format, ...);
 void DSPController_lcd_bottom(const char* format, ...);
 void DSPController_lcd(unsigned char line, const char* format, ...);
-unsigned char DSPController_get_dip(void);
-int DSPController_get_encoder(unsigned char encoder);
-unsigned char DSPController_get_event(void);
+DIP DSPController_get_dip(void);
+Encoder DSPController_get_encoder(unsigned char encoder);
+Event DSPController_get_event(void);
 
 
 //========================================================================

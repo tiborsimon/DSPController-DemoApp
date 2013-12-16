@@ -308,12 +308,12 @@ void DSPController_init_default(void);
 void DSPController_init(int code);
 void DSPController_tick(void);
 void DSPController_flush(void);
-void DSPController_led(unsigned char leftLed, unsigned char rightLed);
+void DSPController_led(char leftLed, char rightLed);
 void DSPController_lcd_top(const char* format, ...);
 void DSPController_lcd_bottom(const char* format, ...);
-void DSPController_lcd(unsigned char line, const char* format, ...);
+void DSPController_lcd(char line, const char* format, ...);
 DIP DSPController_get_dip(void);
-Encoder DSPController_get_encoder(unsigned char encoder);
+Encoder DSPController_get_encoder(char encoder);
 Event DSPController_get_event(void);
 
 

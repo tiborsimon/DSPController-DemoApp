@@ -809,7 +809,7 @@ unsigned char DSPController_get_event() {
 //  E N C O D E R   H A N D L I N G
 //========================================================================
 
-int DSPController_get_encoder(unsigned char encoder) {
+int DSPController_get_encoder(char encoder) {
     int ret = 0;
     if (encoder == 1) {
         ret = dspcontroller_encoder_1;
@@ -829,7 +829,7 @@ int DSPController_get_encoder(unsigned char encoder) {
 //  L E D   H A N D L I N G
 //========================================================================
 
-void DSPController_led(unsigned char led_l, unsigned char led_r) {
+void DSPController_led(char led_l, char led_r) {
 
     if (dspcontroller_spi_state < DSPC_STATE_SPI_IDLE) {
         return;
@@ -909,7 +909,7 @@ void dspcontroller_lcd_handler(unsigned char line, const char* format, va_list a
     
 }
 
-void DSPController_lcd(unsigned char line, const char* format, ...) {
+void DSPController_lcd(char line, const char* format, ...) {
     va_list args;
     va_start (args, format);
     dspcontroller_lcd_handler(line,format,args);

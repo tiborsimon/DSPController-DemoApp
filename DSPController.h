@@ -34,6 +34,7 @@
 typedef unsigned char 	Event;
 typedef unsigned char	DIP;
 typedef signed short	Encoder;
+typedef unsigned char   Led;
 
 
 //========================================================================
@@ -308,7 +309,7 @@ void DSPController_init_default(void);
 void DSPController_init(int code);
 void DSPController_tick(void);
 void DSPController_flush(void);
-void DSPController_led(char leftLed, char rightLed);
+void DSPController_led(Led leftLed, Led rightLed);
 void DSPController_lcd_top(const char* format, ...);
 void DSPController_lcd_bottom(const char* format, ...);
 void DSPController_lcd(char line, const char* format, ...);

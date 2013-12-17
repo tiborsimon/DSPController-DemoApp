@@ -45,10 +45,10 @@ volatile int 				dspcontroller_encoder_velocity_2;
 volatile int 				dspcontroller_encoder_velocity_3;
 
 // led handling variables
-volatile unsigned char	    dspcontroller_led_l;
-volatile unsigned char	    dspcontroller_led_r;
-volatile unsigned char      dspcontroller_led_l_out;
-volatile unsigned char      dspcontroller_led_r_out;
+volatile Led      	    dspcontroller_led_l;
+volatile Led    	    dspcontroller_led_r;
+volatile Led                dspcontroller_led_l_out;
+volatile Led                dspcontroller_led_r_out;
 volatile unsigned char      dspcontroller_led_counter;
 volatile unsigned char      dspcontroller_led_cycle_counter;
 volatile unsigned char      dspcontroller_leds_are_waiting;
@@ -829,7 +829,7 @@ int DSPController_get_encoder(char encoder) {
 //  L E D   H A N D L I N G
 //========================================================================
 
-void DSPController_led(char led_l, char led_r) {
+void DSPController_led(Led led_l, Led led_r) {
 
     if (dspcontroller_spi_state < DSPC_STATE_SPI_IDLE) {
         return;

@@ -6,7 +6,7 @@
 //                                                                        //
 //  This  file  contains  all of the  interface functionalities. You can  //
 //  implement  your custom  interface  application  by writing code with  //
-//  the DSPController API inside the two functions defined below.          //
+//  the DSPController API inside the two functions defined below.         //
 //                                                                        //
 //========================================================================//
 

@@ -18,35 +18,35 @@
 //  C O R E   V A R I A B L E S
 //========================================================================
 // settings variables
-volatile int 				dspcontroller_tick_threshold = DSPC_TICK_THRESHOLD_48;
+volatile int                                 dspcontroller_tick_threshold = DSPC_TICK_THRESHOLD_48;
 
-volatile int 				dspcontroller_led_counter_max = DSPC_LED_COUNTER_MAX_48;
-volatile int 				dspcontroller_lcd_counter_max = DSPC_LCD_COUNTER_MAX_48;
-volatile int 				dspcontroller_dip_counter_max = DSPC_DIP_COUNTER_MAX_48;
+volatile int                                 dspcontroller_led_counter_max = DSPC_LED_COUNTER_MAX_48;
+volatile int                                 dspcontroller_lcd_counter_max = DSPC_LCD_COUNTER_MAX_48;
+volatile int                                 dspcontroller_dip_counter_max = DSPC_DIP_COUNTER_MAX_48;
 
-volatile char 				dspcontroller_encoder_velocity_enabled = 1;
+volatile char                                 dspcontroller_encoder_velocity_enabled = 1;
 
 // state machine variables
-volatile short          	dspcontroller_tick_counter;
-volatile unsigned char	    dspcontroller_spi_state;
-volatile unsigned char	    dspcontroller_receive_counter;
+volatile short                  dspcontroller_tick_counter;
+volatile unsigned char            dspcontroller_spi_state;
+volatile unsigned char            dspcontroller_receive_counter;
 
 // event handling variables
-volatile unsigned char 		dspcontroller_event_buffer[DSPC_EVENT_BUFFER_SIZE];
+volatile unsigned char                 dspcontroller_event_buffer[DSPC_EVENT_BUFFER_SIZE];
 volatile unsigned char      dspcontroller_event_pointer;
 
 // encoder variables
-volatile int         		dspcontroller_encoder_1;   
-volatile int         		dspcontroller_encoder_2; 
-volatile int         		dspcontroller_encoder_3;
+volatile int                         dspcontroller_encoder_1;   
+volatile int                         dspcontroller_encoder_2; 
+volatile int                         dspcontroller_encoder_3;
 
-volatile int 				dspcontroller_encoder_velocity_1;
-volatile int 				dspcontroller_encoder_velocity_2;
-volatile int 				dspcontroller_encoder_velocity_3;
+volatile int                                 dspcontroller_encoder_velocity_1;
+volatile int                                 dspcontroller_encoder_velocity_2;
+volatile int                                 dspcontroller_encoder_velocity_3;
 
 // led handling variables
-volatile Led      	    dspcontroller_led_l;
-volatile Led    	    dspcontroller_led_r;
+volatile Led                  dspcontroller_led_l;
+volatile Led                dspcontroller_led_r;
 volatile Led                dspcontroller_led_l_out;
 volatile Led                dspcontroller_led_r_out;
 volatile unsigned char      dspcontroller_led_counter;
@@ -54,25 +54,25 @@ volatile unsigned char      dspcontroller_led_cycle_counter;
 volatile unsigned char      dspcontroller_leds_are_waiting;
 
 // lcd handling variables
-volatile unsigned char	    dspcontroller_lcd_top_is_waiting;
+volatile unsigned char            dspcontroller_lcd_top_is_waiting;
 volatile unsigned char      dspcontroller_lcd_top_counter;
 volatile unsigned char      dspcontroller_lcd_top_cycle_counter;
 
 
-volatile unsigned char	    dspcontroller_lcd_bottom_is_waiting;
+volatile unsigned char            dspcontroller_lcd_bottom_is_waiting;
 volatile unsigned char      dspcontroller_lcd_bottom_counter;
 volatile unsigned char      dspcontroller_lcd_bottom_cycle_counter;
 
 
 
 
-char						dspcontroller_lcd_top[16];
-char						dspcontroller_lcd_bottom[16];
-char      					dspcontroller_lcd_top_out[16];
-char      					dspcontroller_lcd_bottom_out[16];
+char                                                dspcontroller_lcd_top[16];
+char                                                dspcontroller_lcd_bottom[16];
+char                                              dspcontroller_lcd_top_out[16];
+char                                              dspcontroller_lcd_bottom_out[16];
 
-char						dspcontroller_lcd_top_check[16];
-char						dspcontroller_lcd_bottom_check[16];
+char                                                dspcontroller_lcd_top_check[16];
+char                                                dspcontroller_lcd_bottom_check[16];
 
 // dip handling variables
 volatile unsigned char      dspcontroller_dip;
@@ -96,19 +96,19 @@ volatile unsigned char      dspcontroller_dip_counter;
 void dspcontroller_spi_init() {
     
     // init SPI MASTER TX
-	*(volatile int *)DSPC_SHARC_SPICTL = 0;
-	*(volatile int *)DSPC_SHARC_SPIFLG = 0;
+        *(volatile int *)DSPC_SHARC_SPICTL = 0;
+        *(volatile int *)DSPC_SHARC_SPIFLG = 0;
 
-	// set SPI BAUD
-	*(volatile int *)DSPC_SHARC_SPIBAUD = 20;
+        // set SPI BAUD
+        *(volatile int *)DSPC_SHARC_SPIBAUD = 20;
 
-	// set up DAG registers
-	*(volatile int *)DSPC_SHARC_SPICTL = DSPC_SHARC_TIMOD|
-         								 DSPC_SHARC_MSBF|
-         								 DSPC_SHARC_SPIMS|
-         								 DSPC_SHARC_SPIEN|
-         								 DSPC_SHARC_GM;
-         								 
+        // set up DAG registers
+        *(volatile int *)DSPC_SHARC_SPICTL = DSPC_SHARC_TIMOD|
+                                                                          DSPC_SHARC_MSBF|
+                                                                          DSPC_SHARC_SPIMS|
+                                                                          DSPC_SHARC_SPIEN|
+                                                                          DSPC_SHARC_GM;
+                                                                          
     // init DAI pin for SS
     // *(volatile int *)(0x247D) = 0;
     SRU(HIGH,PBEN15_I);
@@ -129,8 +129,8 @@ void DSPController_init_default() {
     dspcontroller_tick_threshold = DSPC_TICK_THRESHOLD_48;
     
     dspcontroller_led_counter_max = DSPC_LED_COUNTER_MAX_48;
-	dspcontroller_lcd_counter_max = DSPC_LCD_COUNTER_MAX_48;
-	dspcontroller_dip_counter_max = DSPC_DIP_COUNTER_MAX_48;
+        dspcontroller_lcd_counter_max = DSPC_LCD_COUNTER_MAX_48;
+        dspcontroller_dip_counter_max = DSPC_DIP_COUNTER_MAX_48;
 
     dspcontroller_encoder_velocity_enabled = 1;
     
@@ -143,15 +143,15 @@ void DSPController_init(int code) {
         dspcontroller_tick_threshold = DSPC_TICK_THRESHOLD_48;
         
         dspcontroller_led_counter_max = DSPC_LED_COUNTER_MAX_48;
-		dspcontroller_lcd_counter_max = DSPC_LCD_COUNTER_MAX_48;
-		dspcontroller_dip_counter_max = DSPC_DIP_COUNTER_MAX_48;
-		
+                dspcontroller_lcd_counter_max = DSPC_LCD_COUNTER_MAX_48;
+                dspcontroller_dip_counter_max = DSPC_DIP_COUNTER_MAX_48;
+                
     } else {
         dspcontroller_tick_threshold = DSPC_TICK_THRESHOLD_96;
         
         dspcontroller_led_counter_max = DSPC_LED_COUNTER_MAX_96;
-		dspcontroller_lcd_counter_max = DSPC_LCD_COUNTER_MAX_96;
-		dspcontroller_dip_counter_max = DSPC_DIP_COUNTER_MAX_96;
+                dspcontroller_lcd_counter_max = DSPC_LCD_COUNTER_MAX_96;
+                dspcontroller_dip_counter_max = DSPC_DIP_COUNTER_MAX_96;
     }
     
     if((code & 0x02) != 0) {
@@ -809,7 +809,7 @@ unsigned char DSPController_get_event() {
 //  E N C O D E R   H A N D L I N G
 //========================================================================
 
-int DSPController_get_encoder(char encoder) {
+Encoder DSPController_get_encoder(char encoder) {
     int ret = 0;
     if (encoder == 1) {
         ret = dspcontroller_encoder_1;
@@ -870,7 +870,7 @@ void dspcontroller_lcd_handler(unsigned char line, const char* format, va_list a
     for(i=0;i<16;i++) {
         limit_buff[i] = i<limitLength ? input_buff[i] : ' ';
     }
-	
+        
     
     // check if its new or not
     if (line == 0) {
@@ -880,10 +880,10 @@ void dspcontroller_lcd_handler(unsigned char line, const char* format, va_list a
                 equal = 0;
             }
             dspcontroller_lcd_top_check[i] = limit_buff[i];
-    	}
-    	if(equal == 1) {
-    		return;   
-    	}
+            }
+            if(equal == 1) {
+                    return;   
+            }
     } else {
         char equal = 1;
         for(i=0;i<16;i++) {
@@ -891,10 +891,10 @@ void dspcontroller_lcd_handler(unsigned char line, const char* format, va_list a
                 equal = 0;
             }
             dspcontroller_lcd_bottom_check[i] = limit_buff[i];
-    	}
-    	if(equal == 1) {
-    		return;   
-    	}
+            }
+            if(equal == 1) {
+                    return;   
+            }
     }
     
     
@@ -1063,7 +1063,7 @@ void dspcontroller_assembler_add_number(unsigned char n) {
     }
     
     if (dspcontroller_assembler_state == DSPC_ASSEMBLER_STATE_DECIMAL
-    	&& dspcontroller_assembler_wp >= 7) return;
+            && dspcontroller_assembler_wp >= 7) return;
     
     if (dspcontroller_assembler_state == DSPC_ASSEMBLER_STATE_IDLE) {
         dspcontroller_assembler_state = DSPC_ASSEMBLER_STATE_DECIMAL;
@@ -1206,5 +1206,4 @@ char* DSPC_FTS(DSPC_CONV_TYPE f, unsigned char precision) {
     return dspcontroller_float_to_char_buffer[dspcontroller_float_to_char_index];
 }
 #endif // _ADD_FLOAT_TO_STRING_CONVERTER
-
 

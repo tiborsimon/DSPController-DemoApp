@@ -26,9 +26,10 @@ The __INTERFACE.c__ file demonstrates the easiest method to implement a menu bas
 
 ---
 
-### Check out the whole boudle
+### Check out the whole boundle
 
 [DSPController Bundle](https://github.com/tiborsimon/DSPController-Bundle)
+
 
 
 

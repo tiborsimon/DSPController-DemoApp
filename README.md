@@ -24,5 +24,12 @@ The project contains a bit more advanced application that implements
 
 The __INTERFACE.c__ file demonstrates the easiest method to implement a menu based complex human interface with a state machine. __GLUE.h__ demonstrates how to work with global variables and it's initial values.
 
+---
+
+### Check out the whole boudle
+
+[DSPController Bundle](https://github.com/tiborsimon/DSPController-Bundle)
+
+
 
 

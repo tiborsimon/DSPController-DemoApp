@@ -1,4 +1,4 @@
-#DSPController
+# DSPController
 
 
 __DSPController__ is an embedded human interface device that connects to the _Analog Devices_ __SHARC ADSP-21364__ evaluation board via SPI to upgrade its flexibility. The __DSPController__ bundle contains the hardware itself and the software API which can be used in the VisualDSP++ environment with the supported DSP chips.
